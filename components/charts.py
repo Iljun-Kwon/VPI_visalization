@@ -68,7 +68,7 @@ def render_avg_views_table(df_metrics):  # 일차별 평균조회수 테이블
     """
     df_metrics: ['day', '평균 조회수']
     """
-    df_metrics = df_metrics.applymap(lambda x: f"{int(x):,}")
+    df_metrics = df_metrics.map(lambda x: f"{int(x):,}")
     st.dataframe(df_metrics)
 
 def render_avg_views_line_chart(df_metrics, title: str = ""):

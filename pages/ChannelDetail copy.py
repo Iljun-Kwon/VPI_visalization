@@ -14,13 +14,7 @@ from utils.apply_hyojun_index import compute_video_gain_scores, aggregate_views_
 from components.charts import render_avg_views_table, render_avg_views_line_chart
 from components.video_card_st import render_video_card
 from components.channel_nameCard import render_name_card
-from utils.apply_hyojun_sub import (
-    load_status,
-    initial_batch,
-    incremental_update,
-    STATUS_FILE,
-    SUBS_FILE
-)
+from utils.apply_hyojun_sub import compute_video_subscriber_contributions
 
 def img_url_to_base64(url):
     response = requests.get(url)
@@ -64,6 +58,7 @@ def main():
    
     # Shorts vs Long-form 평균 조회수
     st.header("영상 통계량👑")
+    st.write(ch_df)
 
     col1, col2 = st.columns(2)
     with col1: # 롱폼
@@ -119,13 +114,13 @@ def main():
         days         = 14
     )
     # 1.5) subscriber_cont 계산
-    if load_status() is None:
-        initial_batch(ch_df, result_L)
-    else:
-        incremental_update(ch_df, result_L)
-
-    # 2) 갱신된 subs_contrib.csv 불러오기
-    subs_df = pd.read_csv(SUBS_FILE)  # columns: video_id, subs_contrib
+    subs_df = compute_video_subscriber_contributions(
+        ch_df        = ch_df,
+        result_L     = result_L,
+        daily_avg    = daily_avg,
+        correction   = 0.85,
+        max_days     = 14
+    )
 
     # 2) 다중이 계싼  
     # 반환값: DataFrame with columns ['video_id','Standardized Coefficient (βᵢ)']
@@ -169,7 +164,11 @@ def main():
             )
 
             #5.5) sub_Contrib merge
-            update_video = update_video.merge(subs_df, on='video_id', how='left').fillna({'subs_contrib': 0})
+            update_video = update_video.merge(
+                subs_df,
+                on='video_id',
+                how='left'
+            ).fillna({'subs_contrib': 0})
 
             # 6) Standardized Coefficient (βᵢ) 머지
             update_video = (

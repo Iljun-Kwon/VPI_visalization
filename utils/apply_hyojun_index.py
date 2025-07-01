@@ -7,7 +7,7 @@ from utils.metrics import parse_published_at
 def compute_channel_gain_index(
     channel_df: pd.DataFrame,
     r0: float = 0.01,
-    days: int = 10, 
+    days: int = 14, 
     daily_avg: float = None
 ) -> float:
     """
@@ -26,7 +26,7 @@ def compute_channel_gain_index(
     if daily_avg != None:
         ΔS = daily_avg * days
     else :
-        cutoff = df['timestamp'].max() - timedelta(days=days)
+        cutoff = df['timestamp'].max() - timedelta(days=days) #가장 최근 수집으로부터 2주 전과 비교.
         recent = df[df['timestamp'] >= cutoff]
         if len(recent) < 2:
             ΔS = 0
@@ -88,7 +88,7 @@ def aggregate_views_within_days( #조회수 변화량을 영상별로 집계 (10
             end_snap = group[group['timestamp'] >= cutoff].sort_values('timestamp').iloc[0]
         return end_snap
 
-    end_snaps = df.groupby('video_id').apply(pick_end_snap) 
+    end_snaps = df.groupby('video_id').apply(pick_end_snap, include_groups=False)
 
     # 3) view 변화량 계산
     view0 = first_snaps['view_count']

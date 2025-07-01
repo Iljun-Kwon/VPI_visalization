@@ -8,7 +8,7 @@ def load_processed_data(path="data/processed_data_v2.csv"):
     """
     영상별 구독자/조회수/카테고리 로그 CSV 파일 불러오기
     """
-    df = pd.read_csv(path, encoding='utf-8-sig', on_bad_lines='skip')  
+    df = pd.read_csv(path, encoding='utf-8-sig', on_bad_lines='skip', dtype={'is_short': 'boolean'})  
     df['timestamp'] = pd.to_datetime(df['timestamp'])
 
       # 누락된 썸네일 채우기
