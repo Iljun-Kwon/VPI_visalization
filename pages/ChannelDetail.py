@@ -112,7 +112,7 @@ def main():
         end_subs     = end,
         total_views  = total_view,
         c            = 100.0,
-        days         = 10
+        days         = 14
     )
 
     #    반환값: DataFrame with columns ['video_id','Standardized Coefficient (βᵢ)']

@@ -103,7 +103,7 @@ def compute_video_gain_scores(
     end_subs: int,
     total_views: int,
     c: float = 100.0,
-    days: int = 10
+    days: int = 14
 ) -> pd.DataFrame:
     """
     쇼츠 영상을 배제하고 롱폼 영상 기준으로 채널 GainIndex를 계산한 뒤,
@@ -128,7 +128,7 @@ def compute_video_gain_scores(
     #    total_views 파라미터는 롱폼 기준으로 재계산하므로 여기서는 end_subs/(sum of all views) 대신 재구성할 수 있음
     #    기본적으로 주어진 total_views로 계산하되, 0 방지 처리
     if total_views > 0:
-        r0_baseline = (end_subs / total_views) / np.log(end_subs + c)
+        r0_baseline = (end_subs / total_views) / np.log(end_subs*0.5 + c)
     else:
         r0_baseline = 0.0
 
