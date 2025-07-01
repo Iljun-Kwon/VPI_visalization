@@ -1,8 +1,10 @@
 # pages/2_ChannelDetail.py
 import streamlit as st
-import pandas as np
+import pandas as pd
 import streamlit.components.v1 as components
 from streamlit.components.v1 import html
+
+from utils.apply_regression_index import regression_score
 from utils.data_loader import load_processed_data, load_channel_meta
 from utils.metrics import (
     get_subscriber_metrics, avg_views, 
@@ -112,9 +114,17 @@ def main():
         c            = 100.0,
         days         = 10
     )
+
+    #    반환값: DataFrame with columns ['video_id','Standardized Coefficient (βᵢ)']
+    coefficient_df = regression_score(
+        ch_df  = ch_df,
+        daily_subs  = daily_avg,
+        days        = 14
+    )
     # ──────────────────────────────────────────────────────────
     # 최근 영상 Expander
     st.subheader("최근 영상 상세")
+
     
     # 1) 롱폼/숏폼 필터링 탭
     tab_all, tab_longs, tab_shorts = st.tabs(["전체영상", "롱폼", "쇼츠"])
@@ -145,7 +155,14 @@ def main():
                 .fillna({'gain_score': 0})     # 계산 누락된 경우 0으로
             )
 
-            # 6) 정렬 기준 선택
+            # 6) Standardized Coefficient (βᵢ) 머지
+            update_video = (
+                update_video
+                .merge(coefficient_df, on='video_id', how='left')
+                .fillna({'βᵢ / β_total': 0})  # 계산 누락된 경우 0으로
+            )
+
+            # 7) 정렬 기준 선택
             col1, col2 = st.columns([3,1])
             col1.markdown(f"**총 영상개수: {len(update_video):,}개**")
             sort_option = col2.selectbox(
@@ -198,7 +215,8 @@ def main():
                     snapshot_df=   snapshot_df,
                     metrics_df=    metrics_df,
                     tab_name = tab_name
-    )
+                )
+    st.write(coefficient_df)
 
 if __name__ == "__main__":
     main()
