@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 
@@ -82,7 +83,8 @@ def regression_score(
 
     regression_results = pd.DataFrame({
         "video_id": X.columns,
-        "βᵢ / β_total": normalized_betas
+        "βᵢ / β_total": normalized_betas,
+        "regression_subs_contrib": np.nan_to_num(normalized_betas * daily_subs)
     })
 
     return regression_results

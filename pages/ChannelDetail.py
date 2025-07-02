@@ -128,9 +128,9 @@ def main():
     subs_df = pd.read_csv(SUBS_FILE)  # columns: video_id, subs_contrib
 
     # 2) 다중이 계싼  
-    # 반환값: DataFrame with columns ['video_id','Standardized Coefficient (βᵢ)']
+    # 반환값: DataFrame with columns ['video_id','βᵢ / β_total', 'regression_subs_contrib']
     coefficient_df = regression_score(
-        ch_df  = ch_df,
+        ch_df       = ch_df,
         daily_subs  = daily_avg,
         days        = 14
     )
@@ -138,7 +138,7 @@ def main():
     # 최근 영상 Expander
     st.subheader("최근 영상 상세")
 
-    
+
     # 1) 롱폼/숏폼 필터링 탭
     tab_all, tab_longs, tab_shorts = st.tabs(["전체영상", "롱폼", "쇼츠"])
     
@@ -232,7 +232,7 @@ def main():
                     metrics_df=    metrics_df,
                     tab_name = tab_name
                 )
-    st.write(coefficient_df)
+    #st.write(coefficient_df)
 
 if __name__ == "__main__":
     main()
