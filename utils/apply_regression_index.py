@@ -42,7 +42,7 @@ def regression_score(
     daily_views_df["Date"] = daily_views_df.index.date
 
     # use this line to check
-    # daily_views_df.to_csv("data/daily.csv", index=False)
+    #daily_views_df.to_csv("data/daily.csv", index=False)
 
     # Group by calendar day
     grouped_views = daily_views_df.groupby("Date").sum()
@@ -50,7 +50,8 @@ def regression_score(
     grouped_views.reset_index(inplace=True)
 
     grouped_views["Date"] = pd.to_datetime(grouped_views["Date"])
-    grouped_views["Daily Subscribers"] = daily_subs
+    #erase random after getting daily sub correctly
+    grouped_views["Daily Subscribers"] = daily_subs + np.random.normal(0, 0.5, size=len(grouped_views))
 
     #grouped_views["Daily Subscribers"] = grouped_views["Daily Subscribers"].fillna(0).astype(int)
     grouped_views["Day"] = range(1, len(grouped_views) + 1)
