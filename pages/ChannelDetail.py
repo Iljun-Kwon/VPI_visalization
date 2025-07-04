@@ -10,7 +10,7 @@ from utils.metrics import (
     get_subscriber_metrics, avg_views, 
     avg_view_by_days_since_published, format_korean_count, parse_published_at
 )
-from utils.apply_hyojun_index import compute_video_gain_scores, aggregate_views_within_days
+from utils.apply_hyojun_index import compute_video_gain_scores
 from components.charts import render_avg_views_table, render_avg_views_line_chart
 from components.video_card_st import render_video_card
 from components.channel_nameCard import render_name_card
@@ -18,7 +18,6 @@ from utils.apply_hyojun_sub import (
     load_status,
     initial_batch,
     incremental_update,
-    STATUS_FILE,
     SUBS_FILE
 )
 
@@ -127,13 +126,20 @@ def main():
     # 2) 갱신된 subs_contrib.csv 불러오기
     subs_df = pd.read_csv(SUBS_FILE)  # columns: video_id, subs_contrib
 
-    # 2) 다중이 계싼  
+    # 2) 다중이 계산
     # 반환값: DataFrame with columns ['video_id','βᵢ / β_total', 'regression_subs_contrib']
     coefficient_df = regression_score(
         ch_df       = ch_df,
         daily_subs  = daily_avg,
         days        = 14
     )
+
+    # 기본이 계산
+    #final_score_df = compute_gain_score(
+    #    channel_df  = ch_df,
+    #    daily_subs  = daily_avg,
+    #    days        = 14
+    #)
     # ──────────────────────────────────────────────────────────
     # 최근 영상 Expander
     st.subheader("최근 영상 상세")
